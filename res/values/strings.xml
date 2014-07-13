@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GetLog</string>
+    <string name="action_settings">Settings</string>
+    <string name="command">Log 命令:</string>
+     <string name="save_path">保存路径:</string>
+     <string name="log_switch1">开关</string>
+     <string name="log_name">L</string>
+</resources>
