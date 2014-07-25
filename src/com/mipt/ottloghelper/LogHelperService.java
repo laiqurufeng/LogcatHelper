@@ -65,8 +65,6 @@ public class LogHelperService extends Service {
 
 	private void startLog(final String cmd, final String path) {
 
-		LogcatTool.closeReader();
-		
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -80,7 +78,9 @@ public class LogHelperService extends Service {
 						LogApplication logApplication = (LogApplication) mContext
 								.getApplicationContext();
 						logApplication.WriteConfPreferences(cmd, path);
-					}else {
+					} else {
+						Toast.makeText(LogHelperService.this, "send cmd fail!",
+								Toast.LENGTH_SHORT).show();
 						Log.d(Constants.TAG, "return false");
 					}
 
@@ -95,7 +95,7 @@ public class LogHelperService extends Service {
 	}
 
 	private void stopLog() {
-		LogcatTool.closeReader();
+		LogcatTool.closeLogcat();
 		mHandler.sendEmptyMessage(STOPOFF);
 	}
 
@@ -106,10 +106,11 @@ public class LogHelperService extends Service {
 			if (Constants.ACTION_LOGBROADCAST.equals(intent.getAction())) {
 				boolean bLogSwitch = intent.getBooleanExtra(
 						Constants.LOGSWITCH, false);
-				String sCmd = intent.getStringExtra(Constants.CMD_STRING);
-				String sPath = intent.getStringExtra(Constants.PATH_STRING);
 
 				if (bLogSwitch) {
+					String sCmd = intent.getStringExtra(Constants.CMD_STRING);
+					String sPath = intent.getStringExtra(Constants.PATH_STRING);
+
 					startLog(sCmd, sPath);
 				} else {
 					stopLog();
@@ -122,7 +123,10 @@ public class LogHelperService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		LogcatTool.closeLogcat();
 		unregisterReceiver(logSwitchReciver);
+
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 	/**
